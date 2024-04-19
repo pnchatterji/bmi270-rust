@@ -70,13 +70,14 @@ Note that you will need to use the Segger tool "J-Link DLL Update" to revert to 
 
 If you wish to avoid doing this, it is possible to flash and run the accel elf file on the target using the Segger tool *nrfgprog.exe* in the usual way:
 
-´´´
+```
 copy /y target\thumbv7em-none-eabihf\debug\accel accel.elf 
 nrfjprog --sectoranduicrerase -f NRF52 --program accel.elf 
 nrfjprog --pinresetenable -f NRF52
 nrfjprog --pinreset -f NRF52
+```
 
-´´´
+
 However, Segger tools like J-Link viewer cannot currently view the log output from the Embassy application which uses the *defmt-rtt* protocol which is used by Embassy for logging. A workaround may be possible. I am still exploring other possibilities.
 
 ## Open Points
