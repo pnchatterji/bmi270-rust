@@ -21,7 +21,7 @@ Mount the BMI270 shuttle board on APP30. Connect APP30 and the J-Link probe to t
 
 ## Software Setup
 1. Install Rust https://www.rust-lang.org/tools/install
-2. Install the Embassy RTOS https://github.com/embassy-rs/embassy
+2. Install the Embassy RTOS https://github.com/embassy-rs/embassy and dependencies.
 3. Clone this repository in your project folder.
 4. Optionally Install VSCode and install the Rust Analyzer plugin https://code.visualstudio.com/docs/languages/rust
 
@@ -31,13 +31,13 @@ Open a console app (or use the inbuilt console in VS Code), change directory to 
 ```
 cargo build
 ```
-If the build is successful, run the sample application with the command :
+This will build an elf file named accel (the name of the sample project) in *./target/thumbv7em-none-eabihf/debug/* .  If the build is successful, run the sample application with the command :
 
 ```
 cargo run
 ```
 
-If all goes well, the output from the BMI 270 accelerometer and gyroscope will be dumped every 3 seconds along with various debug information:
+This will flash the elf file on the target using the *probe-rs* toolkit (which was installed as a part of the Embassy installation) via the jlink debug probe and reset the MCU. If all goes well, the readings from the BMI270 accelerometer and gyroscope will be dumped every 3 seconds using the *defmt-rtt* logger, along with various debug information:
 
 ```
 
@@ -62,11 +62,22 @@ If all goes well, the output from the BMI 270 accelerometer and gyroscope will b
 ```
 **NOTE**
 
-Embassy uses the *defmt_rtt* crate to debug the embedded application via the Segger-J-Link probe. *Defmt_rtt* uses the WinUSB driver to connect to the J-Link probe. If JLink.dll is installed on the host computer, which would be the case if the Segger software had been previously installed, *defmt_rtt* will not work. In this case, it is necessary to use the Zadig2.8 tool to remove JLink.dll and install WinUSB.
+Embassy uses the *probe-rs* toolkit to flash and debug the embedded application via the Segger-J-Link probe. *probe-rs* uses the WinUSB driver to connect to the J-Link probe. If JLink.dll is installed on the host computer, which would be the case if the Segger software had been previously installed, *probe-rs* will not work. In this case, it is necessary to use the Zadig2.8 tool to remove JLink.dll and install WinUSB. This is explained here https://probe.rs/docs/getting-started/probe-setup/#windows%3A-winusb-drivers
 
 When you do *cargo run*, the error message will provide the necessary details for carrying out the above steps.
 
-Note that you will need to use the Segger tool "J-Link DLL Update" to revert to the previous condition, in order to use Segger software for non-rust applications.
+Note that you will need to use the Segger tool "J-Link DLL Update" to revert to JLink.dll, in order to use Segger tools in the usual fashion.
+
+If you wish to avoid doing this, it is possible to flash and run the accel elf file on the target using the Segger tool *nrfgprog.exe* in the usual way:
+
+´´´
+copy /y target\thumbv7em-none-eabihf\debug\accel accel.elf 
+nrfjprog --sectoranduicrerase -f NRF52 --program accel.elf 
+nrfjprog --pinresetenable -f NRF52
+nrfjprog --pinreset -f NRF52
+
+´´´
+However, Segger tools like J-Link viewer cannot currently view the log output from the Embassy application which uses the *defmt-rtt* protocol which is used by Embassy for logging. A workaround may be possible. I am still exploring other possibilities.
 
 ## Open Points
 
