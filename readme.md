@@ -16,7 +16,7 @@ Hardware Requirement:
 3. Segger J-Link Probe
 
 Mount the BMI270 shuttle board on APP30. Connect APP30 and the J-Link probe to the host PC via usb. Connect the J-Link probe to APP30 debug port.
-
+![HW Setup](./hw_setup.jpg)
 ## Software Setup
 1. Install Rust https://www.rust-lang.org/tools/install
 2. Install the Embassy RTOS https://github.com/embassy-rs/embassy
